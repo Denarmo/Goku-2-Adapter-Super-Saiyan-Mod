@@ -79,9 +79,44 @@ class AdapterInfo {
         firmware = r[4] | r[5] << 8,
         settingsSize = r[6],
         outputMode = r[7],
-        controllerType = r[8];
+        controllerType = r[8],
+        controllerConnected = r[9] != 0,
+        _battery = r[3] >= 2 ? (r[10] | r[11] << 8 | r[12] << 16 | r[13] << 24) : null;
   final int protocol, firmware, settingsSize, outputMode, controllerType;
+  final bool controllerConnected;
+  final int? _battery;
   String get firmwareText => '${firmware >> 8}.${(firmware & 0xFF).toRadixString(16).padLeft(2, '0')}';
+
+  /// Battery of the connected controller; null when the firmware or controller doesn't report it.
+  Battery? get battery {
+    final raw = _battery;
+    if (raw == null || controllerType == 0) return null;
+    switch (controllerType) {
+      case 5: // DualShock 4: level 0..10 (11 = full), bit 4 = cable connected
+        final b = raw & 0xFF, level = b & 0x0F;
+        if (b & 0x10 == 0) return Battery((level > 10 ? 10 : level) * 10, BatteryState.discharging);
+        if (level < 10) return Battery(level * 10, BatteryState.charging);
+        if (level <= 11) return const Battery(100, BatteryState.full);
+        return null;
+      case 6:
+      case 7: // DualSense: low nibble = level 0..10, high nibble 0 = discharging, 1 = charging, 2 = full
+        final b = (raw >> 8) & 0xFF, level = b & 0x0F, st = b >> 4;
+        final pct = level * 10 + 5 > 100 ? 100 : level * 10 + 5;
+        if (st == 0) return Battery(pct, BatteryState.discharging);
+        if (st == 1) return Battery(pct, BatteryState.charging);
+        if (st == 2) return const Battery(100, BatteryState.full);
+        return null;
+    }
+    return null;
+  }
+}
+
+enum BatteryState { discharging, charging, full }
+
+class Battery {
+  const Battery(this.percent, this.state);
+  final int percent;
+  final BatteryState state;
 }
 
 class LiveState {

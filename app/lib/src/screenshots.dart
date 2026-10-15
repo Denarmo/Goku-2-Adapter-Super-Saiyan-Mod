@@ -14,7 +14,7 @@ import 'protocol.dart';
 const pages = ['overview', 'firmware', 'touchpad', 'buttons', 'sticks', 'triggers', 'input_test', 'support'];
 
 AdapterModel demoModel() {
-  final info = Uint8List(64)..setAll(0, [2, 1, 0, 1, 0x00, 0x01, 52, 2, 6]);
+  final info = Uint8List(64)..setAll(0, [2, 1, 0, 2, 0x10, 0x01, 52, 2, 6, 1, 0x00, 0x17, 0, 0]);
   final s = Settings(Uint8List.fromList([
     1, 52, 1, 6, 40, 1, 48, 0, 160, 0, 0xF4, 1, // touchpad: on, 0.75x, reverse scrolling
     1, 0, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, // A <-> B

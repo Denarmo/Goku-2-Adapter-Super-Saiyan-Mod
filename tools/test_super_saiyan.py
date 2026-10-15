@@ -110,7 +110,7 @@ def cmd(c, a0=0, a1=0, data=b""):
 
 r = cmd(1)
 size = r[6]
-check("info", r[:3] == b"\x02\x01\x00" and r[3] == 1, f"proto {r[3]} fw {r[4] | r[5] << 8:#06x} settings {size} bytes mode {r[7]}")
+check("info", r[:3] == b"\x02\x01\x00" and r[3] == 2, f"proto {r[3]} fw {r[4] | r[5] << 8:#06x} settings {size} bytes mode {r[7]}")
 r = cmd(2, 0, size)
 settings = bytearray(r[5:5 + size])
 check("read", r[2] == 0 and settings[0] == 1 and settings[1] == size and settings[2] == 1,
@@ -224,6 +224,21 @@ check("mouse", rep and rep[-1][0] == 1 and len(rep[-1]) == 5 and struct.unpack("
 touch(1, 680, 500, click=True)
 rep = touch(1, 680, 500)
 check("mouse", rep and rep[-1][1] == 1, "tap -> left click")
+
+# ---- battery (DS4 parse hook + INFO) ----------------------------------------------
+parse = None
+for line in open(os.path.join(os.path.dirname(__file__), "..", "build", "mods", "mods.map")):
+    if line.rstrip().endswith(" ss_ps_parse"):
+        parse = int(line.split()[0], 16)
+ds4 = bytearray(64); ds4[0] = 0x01; ds4[1:5] = bytes([0x80] * 4); ds4[5] = 0x08; ds4[30] = 0x17
+u.mem_write(BUF, bytes(ds4))
+u.mem_write(STATE, bytes(0x54))
+e.call(parse | 1, 0, BUF, 64, STATE)
+bat = struct.unpack("<I", u.mem_read(STATE + 0x44, 4))[0]
+check("battery", bat == 0x17, f"DS4 status byte -> state +0x44: {bat:#x}")
+u.mem_write(0x2000D478 + 0x44, struct.pack("<I", 0x00002A00))
+r = cmd(1)
+check("battery", r[10:14] == bytes([0, 0x2A, 0, 0]), f"INFO battery bytes {r[10:14].hex(' ')}")
 
 print("RESULT:", "PASS" if ok else "FAIL")
 sys.exit(0 if ok else 1)

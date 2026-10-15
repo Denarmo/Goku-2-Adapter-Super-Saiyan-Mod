@@ -9,20 +9,24 @@
  */
 #include "ss.h"
 
-/* DS4 path: the vendor parser drops touch coordinates; copy them into the
- * same state slots the DualSense parser uses (+0x31 / +0x35). */
+/* DS4 path: the vendor parser drops touch coordinates and the battery byte; copy
+ * them into the slots the DualSense parser uses (touch +0x31 / +0x35, battery +0x44). */
 int ps_parse_state(void *dev, const uint8_t *report, uint32_t len, cntlr_state_t *s);
+
+static __attribute__((noinline)) void ds4_extra(const uint8_t *report, uint32_t len, cntlr_state_t *s)
+{
+    uint32_t bt = report[0] == 0x11 ? 2 : 0;        /* BT report 0x11 has 2 extra bytes */
+    if (len >= bt + 0x2B) {
+        uint8_t *dst = (uint8_t *)s + 0x31;
+        for (int i = 0; i < 8; i++) dst[i] = report[bt + 0x23 + i];
+        s->battery = report[bt + 0x1E];              /* level 0-15, bit 4 = cable */
+    }
+}
 
 int ss_ps_parse(void *dev, const uint8_t *report, uint32_t len, cntlr_state_t *s)
 {
     int ok = ps_parse_state(dev, report, len, s);
-    if (ok) {
-        uint32_t bt = report[0] == 0x11 ? 2 : 0;    /* BT report 0x11 has 2 extra bytes */
-        if (len >= bt + 0x2B) {
-            uint8_t *dst = (uint8_t *)s + 0x31;
-            for (int i = 0; i < 8; i++) dst[i] = report[bt + 0x23 + i];
-        }
-    }
+    if (ok) ds4_extra(report, len, s);
     return ok;
 }
 

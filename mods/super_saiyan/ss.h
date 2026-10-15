@@ -10,8 +10,8 @@
 
 #include "ns36.h"
 
-#define SS_PROTO_VERSION   1
-#define SS_FW_VERSION      0x0100      /* mod firmware 1.0 */
+#define SS_PROTO_VERSION   2       /* 2: INFO reports the battery */
+#define SS_FW_VERSION      0x0110      /* mod firmware 1.1 */
 #define SS_SETTINGS_VER    1
 
 /* stick_flags */

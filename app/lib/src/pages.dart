@@ -158,6 +158,28 @@ class NotConnected extends StatelessWidget {
 
 class OverviewPage extends StatelessWidget {
   const OverviewPage({super.key, required this.model});
+
+  static IconData _batteryIcon(Battery? b) {
+    if (b == null) return Icons.battery_unknown;
+    if (b.state != BatteryState.discharging) return Icons.battery_charging_full;
+    const icons = [
+      Icons.battery_0_bar, Icons.battery_1_bar, Icons.battery_2_bar, Icons.battery_3_bar,
+      Icons.battery_4_bar, Icons.battery_5_bar, Icons.battery_6_bar, Icons.battery_full,
+    ];
+    return icons[(b.percent * (icons.length - 1) / 100).round()];
+  }
+
+  static String _batteryText(AdapterInfo i) {
+    if (i.protocol < 2) return 'Update the firmware';
+    if (i.controllerType == 0) return 'No controller';
+    final b = i.battery;
+    if (b == null) return 'Not reported';
+    return switch (b.state) {
+      BatteryState.full => 'Full',
+      BatteryState.charging => '${b.percent}% · Charging',
+      BatteryState.discharging => '${b.percent}%',
+    };
+  }
   final AdapterModel model;
 
   @override
@@ -184,6 +206,7 @@ class OverviewPage extends StatelessWidget {
       Row(children: [
         tile(Icons.sports_esports, 'Controller', controllerNames[i.controllerType] ?? 'None connected'),
         tile(Icons.settings_input_hdmi, 'Output mode', outputModeNames[i.outputMode] ?? 'Mode ${i.outputMode}'),
+        tile(_batteryIcon(i.battery), 'Battery', _batteryText(i)),
         tile(Icons.memory, 'Mod firmware', 'v${i.firmwareText} (protocol ${i.protocol})'),
       ]),
       const SizedBox(height: 16),

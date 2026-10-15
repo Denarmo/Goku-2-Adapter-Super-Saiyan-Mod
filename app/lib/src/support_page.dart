@@ -5,7 +5,7 @@ import 'win32.dart';
 
 const koFiUrl = 'https://ko-fi.com/denarmo';
 const licenseUrl = 'https://creativecommons.org/licenses/by-nc-sa/4.0/';
-const appVersion = '1.0.0';
+const appVersion = '1.1.0';
 
 class SupportPage extends StatelessWidget {
   const SupportPage({super.key});

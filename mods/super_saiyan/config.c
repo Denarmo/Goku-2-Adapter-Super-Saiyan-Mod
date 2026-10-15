@@ -11,7 +11,8 @@
  *   request  [2][cmd][arg0][arg1][data...]
  *   response [2][cmd][status][payload...]          status 0 = ok, 1 = bad request
  *   0x01 INFO      -> proto, fw version (u16), settings size, output mode,
- *                     controller type, controller connected
+ *                     controller type, controller connected, battery (u32, raw
+ *                     cntlr_state_t +0x44: DS4 status byte / DualSense report bytes 53..56)
  *   0x02 READ      arg0 = offset, arg1 = length (<= 58) -> [offset][length][bytes]
  *   0x03 WRITE     arg0 = offset, arg1 = length, data   (applies immediately)
  *   0x04 SAVE      store the settings in flash (~0.2 s later, in the main loop)
@@ -109,6 +110,7 @@ static __attribute__((noinline)) void info(uint8_t *r)
     r[4] = (uint8_t)NS36_OUTPUT_MODE;
     r[5] = (uint8_t)st->type;
     r[6] = st->timestamp != 0;
+    copy(r + 7, (const void *)&st->battery, 4);
 }
 
 /* READ / WRITE a byte range of the settings; returns the status */

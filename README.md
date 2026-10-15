@@ -107,7 +107,7 @@ python tools/emu_test.py build/NS36_mod.bin
 python tools/test_super_saiyan.py build/NS36_mod.bin
 
 # 4. turn the build into the app's patch (our code only) and build the app
-python tools/make_patch.py firmware/NS36_V3.4.bin build/NS36_mod.bin app/assets/firmware_patch.json 1.0.0
+python tools/make_patch.py firmware/NS36_V3.4.bin build/NS36_mod.bin app/assets/firmware_patch.json 1.1.0
 cd app && flutter build windows --release && cd ..
 ```
 
