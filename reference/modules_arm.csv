@@ -1,0 +1,21 @@
+# Subsystem address ranges (ARMCC lays out code per object file). Unnamed
+# functions are auto-named <prefix>_<address> from this table.
+start,end,prefix,subsystem
+0x10004000,0x100042a6,crt,"vectors, app header, C runtime"
+0x100042a6,0x10005a00,bt_gatt,"ATT/GATT client (builds ATT PDUs 0x10-0x1e)"
+0x10005a00,0x10006140,bt_core,"BT host core: link management, event dispatch"
+0x10006140,0x10008c00,bt_hci,"HCI command/event layer, ACL connections"
+0x10008c00,0x1000d000,bt_l2cap,"L2CAP signalling / SDP (approximate range)"
+0x1000d000,0x1000e300,bt_smp,"SMP pairing / key distribution"
+0x1000e300,0x1000f100,sys,"system, discovery (inquiry, name request, role switch, BLE scan)"
+0x1000f100,0x10011000,cntlr,"controller manager, settings, turbo, rumble"
+0x10011000,0x10013000,usb,"USB device stack, HID class, input pipeline"
+0x10013000,0x10014600,ecc,"P-256 big-number math (pairing)"
+0x10014600,0x10016000,msp,"MSP UART link to the USB-host co-processor"
+0x10016000,0x10017000,ps,"PlayStation driver and encoders"
+0x10017000,0x10018400,rf,"RF calibration, timers, bond storage"
+0x10018400,0x10018dd8,hidh,"Bluetooth HID host"
+0x10018dd8,0x1001a6fc,nsw,"Switch Pro / Switch 2 drivers and encoders"
+0x1001a6fc,0x1001b500,usbctl,"USB enumeration / control requests, Xbox encoder"
+0x1001b500,0x1001c200,rtlib,"ARMCC runtime (fplib, helpers)"
+0x2000c000,0x2000d308,ramfn,"RAM-resident USB/flash routines"

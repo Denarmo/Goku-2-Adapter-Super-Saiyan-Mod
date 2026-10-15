@@ -1,0 +1,12 @@
+build/
+*.gpr
+*.rep/
+__pycache__/
+*.zip
+# GuliKit material is never committed: supply your own official firmware file and
+# regenerate the decompilation locally (see README "Working from source")
+firmware/*.bin
+src/arm/decompiled/
+src/msp/decompiled/
+reference/strings_*.txt
+docs/vendor-upgrade-instructions.txt

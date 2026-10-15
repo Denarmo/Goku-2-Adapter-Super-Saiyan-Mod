@@ -1,0 +1,24 @@
+Goku 2 Adapter Super Saiyan Mod
+Copyright (c) 2026 Denarmo and contributors
+
+This work (the source code, tools, mod SDK, mods, companion app, documentation and
+artwork in this repository) is licensed under the Creative Commons
+Attribution-NonCommercial-ShareAlike 4.0 International License (CC BY-NC-SA 4.0).
+
+To view a copy of this license, visit
+https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
+
+In short: you may share and adapt this work for non-commercial purposes, as long as you
+give appropriate credit, indicate changes, and distribute your contributions under the
+same license. The full legal code above is what applies.
+
+Not covered by this license
+---------------------------
+GuliKit's firmware, any firmware image built from it with this project, and any code
+decompiled from it contain GuliKit's copyrighted code. They are not part of this work,
+are not licensed by it, and must not be distributed with it or with derivatives of it.
+"GuliKit" and "Goku" are trademarks of their owner and are used only to describe
+compatibility.
+
+Third-party components bundled with the companion app (Flutter and Dart packages) keep
+their own licenses; the app lists them under Support > Open-source components.

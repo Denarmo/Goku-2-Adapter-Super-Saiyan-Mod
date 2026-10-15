@@ -1,0 +1,80 @@
+# Manual function names for the ARM main firmware, applied by tools/decompile.sh.
+# address = runtime address (flash 0x10003000 + file offset; mask ROM 0x0000xxxx).
+# Keep the comment short; say how the name was established.
+address,name,comment
+0x00016e48,log_printf,printf-style debug logger; every format string goes through it
+0x000002ec,rom_memcpy,"(dst, src, len) - inferred from RAM USB buffer code"
+0x000003b2,rom_memcmp,"(a, b, len) == 0 on match - compares config with defaults"
+0x1000f304,cntlr_save_config,"writes config block 0x2000d5b8 (turbo masks, sensitivities, remaps) and logs it"
+0x10014780,msp_uart_rx_poll,"MSP link RX state machine: 0xA3 sync, u16 len, payload, checksum"
+0x10014740,msp_uart_send_frame,"MSP link TX: 0x51 header, cmd, u16 len, payload, checksum"
+0x1001467a,msp_frame_checksum,checksum used by both MSP frame directions
+0x100041e4,__main,ARMCC C runtime entry (scatter-load then main)
+0x10004220,__decompress1,ARMCC RW-data LZ decompressor
+0x1000fabc,cntlr_settings_process,"per-frame settings/hotkey/turbo engine; called from cntlr_submit_input"
+0x1001290c,cntlr_submit_input,"universal input entry: every controller driver submits a 0x54-byte cntlr_state_t here"
+0x10019d20,switchpro_in_report,handles reports received from a connected Switch Pro / Switch 2 Pro controller
+0x1001a24c,switchpro_parse_state,parses Switch Pro report 0x30/0x31 into cntlr_state_t
+0x1000428e,__rt_entry,"C runtime entry after scatter-load (never returns)"
+0x1001a3f6,out_encode_switchpro,"output mode 1: Switch Pro input report"
+0x1001a568,out_encode_switchpro_report,builds the Switch Pro 0x30 report body
+0x1001b176,out_encode_xbox,"output modes 2/3: Xbox 360 / Xbox One GIP 0x20 input (+0x07 guide message)"
+0x10016298,out_encode_ps4,"output mode 4: DualShock 4 USB report 0x01"
+0x10016c0c,out_encode_ps5,"output mode 5: DualSense USB report 0x01"
+0x100191ac,out_encode_switch2,"output mode 6: Switch 2 Pro report 0x05"
+0x10012fcc,buttons_to_protocol,"maps cntlr_state_t.buttons to the bit layout of output mode N"
+0x10016e96,dpad_to_hat,"D-pad bits -> 4-bit hat switch value (low nibble)"
+0x1000e5be,unpack_stick12,"unpacks a 3-byte Switch 12-bit stick pair"
+0x1000e5bc,imu_axes_transform,rotates/negates a 3-axis IMU sample in place
+0x10016ed4,stick_calibrate,"(raw, min, max, out_min, out_max) linear calibration with clamp"
+0x1000e4b4,settings_timer_event,"settings engine timer events (1..n); event 2 replays the last state"
+0x10012b78,cntlr_submit_neutral,"submits an all-zero state, re-arms a 500 ms timer"
+0x100160cc,ps_in_report,"PlayStation input: parse with ps_parse_state then submit"
+0x10016110,ps_parse_state,"PlayStation report -> cntlr_state_t (unverified per model)"
+0x10018138,timer_start,"(callback, arg, ms) -> timer handle [inferred]"
+0x0000033a,rom_bzero,"(ptr, len) zero fill - used before every report/state build"
+0x10012a70,usb_send_input_report,"(report, len, flag, 0) sends the encoded input report to the USB host"
+0x0000a668,rom_malloc,"(size) -> ptr; FUN zalloc = malloc+bzero confirms"
+0x00004670,rom_free,"(ptr) - releases rom_malloc/rom_buf_alloc blocks [inferred: 200 call sites, ptr args]"
+0x00000254,rom_irq_save,"() -> primask; pairs with rom_irq_restore around queue ops"
+0x0000025c,rom_irq_restore,(primask)
+0x000046b4,rom_sched_post,"(prio, handler, arg[, flag]) posts a callback/event to the main-loop scheduler [inferred]"
+0x0000a1d2,rom_list_push_back,"(list, item) - RivieraWaves co_list style [inferred]"
+0x0000a38c,rom_list_extract,"(list, item) [inferred]"
+0x0000a36e,rom_list_init,(list) [inferred]
+0x0000a3b4,rom_list_pop_front,"(list) -> item [inferred]"
+0x0000a2b8,rom_list_ops_a2b8,co_list family (unclassified)
+0x0001137e,rom_buf_alloc,"(size) -> buffer, BT stack message/buffer allocator [inferred]"
+0x0001135c,rom_pkt_alloc,"(len, type) -> packet header; payload at +4+hdr [inferred]"
+0x1000cf54,zalloc,"rom_malloc + rom_bzero"
+0x10004c88,pkt_alloc_payload,"allocates a stack packet via rom_pkt_alloc and returns its payload pointer"
+0x100072f0,sched_post_cmd,"wraps a command buffer and posts it to the scheduler under IRQ lock"
+0x10013396,bn_cmp,"288-bit (9x u32) big-number compare: 1 / 0 / -1 (P-256 ECDH for BT pairing)"
+0x100145c6,bn_sub,"a -= b, 9 limbs"
+0x1001335c,bn_add,"a += b, 9 limbs"
+0x1001bae0,__fplib_dcmp,"ARMCC soft-float double compare (part of fplib)"
+0x1001b5ec,__fplib_helper_b5ec,"ARMCC fplib internal (inline literals after BL confuse Ghidra)"
+0x1001bf2c,__fplib_helper_bf2c,ARMCC fplib internal
+0x1001bd48,__fplib_helper_bd48,ARMCC fplib internal
+0x00024ff4,rom_usb_buf_alloc,"(len, 1) -> buffer for an endpoint transfer"
+0x00024ec4,rom_usb_buf_free,"(buf) frees a transfer buffer (done callbacks, error paths)"
+0x00057c90,rom_usb_ep_enable,"(usb_dev, ep_descriptor7, 0) opens an endpoint (used for mode-6 bulk EPs)"
+0x100115bc,usb_ep_send,"(buf, len, ep_addr, done_cb) queues an IN transfer; 1 = queued"
+0x1000ef9c,usb_tx_done_input,"done callback for input reports: frees buffer, clears busy 0x2000cd72"
+0x1000efc4,usb_tx_done_alt,"done callback: frees buffer, clears busy 0x2000cd73"
+0x1000df9c,usb_desc_xbox360,"descriptor provider for output mode 2 (type, index, *len) -> ptr"
+0x1000e08c,usb_desc_mode_alt,"descriptor provider (descriptors parsed at runtime from 0x2000d004)"
+0x1000e020,usb_find_xbox_eps,"scans a config descriptor for interrupt EPs -> 0x2000ce78/0x2000ce7c"
+0x1000df80,usb_set_eps_xbox360,"points 0x2000ce78/7c at the mode-2 endpoint descriptors"
+0x2000c034,usb_ep0_reply,"EP0 control transfer data stage (dir_in, data, len); dir_in=1 copies data and sends it"
+0x2000c0f2,usb_req_class,"HID class requests (GET/SET_REPORT..) callback 0x1001C214; setup packet in, 0 = handled, -1 = stall"
+0x100146ea,msp_forward_request,"forward a USB control request (setup, data, len) to the USB-host co-processor"
+0x1000f6a0,cfg_checksum,"8-bit checksum of the flash config block (buf, len)"
+0x1000f938,cntlr_flash_write_config,"timer event 3: erase sector 0x7B000 and write 'FUN2' + g_config + checksum"
+0x1000f7b0,cntlr_load_config,"boot: load g_config from flash 0x1007B000 (magic 'FUN2', checksum at +0x20) or defaults"
+0x0002557c,rom_timer_start,"(event, group, delay_ms): fire timer event later (event 3 = save config)"
+0x00010528,rom_flash_guard,"1 = enter / 0 = leave flash-write critical section"
+0x000045cc,rom_flash_unlock,"unlock flash for erase/program"
+0x000043a4,rom_flash_erase_sector,"erase the flash sector at offset (e.g. 0x7B000)"
+0x000045e4,rom_flash_program,"program (flash offset, buf, len)"
+0x0000408c,rom_flash_lock,"re-lock flash"

@@ -1,0 +1,4 @@
+# Known data regions inside the ARM code area (functions there are removed and
+# the bytes typed as byte arrays). address,length,name,comment
+address,length,name,comment
+0x1001cce0,256,crc8_table,"CRC-8 poly 0x07 lookup table (verified byte-exact)"

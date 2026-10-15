@@ -1,0 +1,53 @@
+{
+  "description": "Companion-app firmware: touchpad mouse, config channel (HID feature report), saved settings, remap/turbo/toggle/SOCD/stick/trigger features",
+  "enabled": true,
+  "sources": [
+    "usb.c",
+    "config.c",
+    "touch_mouse.c",
+    "features.c"
+  ],
+  "init": "ss_init",
+  "hooks": [
+    {
+      "type": "replace",
+      "site": "0x1000df9c",
+      "to": "ss_desc_x360"
+    },
+    {
+      "type": "pointer",
+      "site": "0x1001c224",
+      "to": "ss_set_config"
+    },
+    {
+      "type": "pointer",
+      "site": "0x1001c218",
+      "to": "ss_req_vendor"
+    },
+    {
+      "type": "pointer",
+      "site": "0x1001c214",
+      "to": "ss_req_class"
+    },
+    {
+      "type": "ram_replace",
+      "site": "0x2000c000",
+      "to": "ss_ep0_out"
+    },
+    {
+      "type": "replace",
+      "site": "0x1000f938",
+      "to": "ss_flash_write"
+    },
+    {
+      "type": "call",
+      "site": "0x100160e6",
+      "to": "ss_ps_parse",
+      "expect": "0x10016110"
+    },
+    {
+      "type": "input_filter",
+      "to": "ss_input"
+    }
+  ]
+}

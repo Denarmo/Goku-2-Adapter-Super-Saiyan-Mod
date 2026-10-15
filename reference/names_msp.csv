@@ -1,0 +1,4 @@
+# address,name,comment  -- manual function names for the MSP (RISC-V) image
+address,name,comment
+0x00000000,_start,"startup: copy RAM code/.data, zero .bss, set gp, mret to main"
+0x00000870,msp_main,"main loop (mepc target of _start); logs EnumAllRootDev errors"

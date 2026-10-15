@@ -1,0 +1,17 @@
+# Named RAM globals of the ARM firmware (exported to mods as linker symbols).
+address,name,comment,type
+0x2000d318,g_output_mode,"USB output protocol 1..6 selected for the host",uint32_t
+0x2000d478,g_last_input_state,"cntlr_state_t copy of the last submitted frame",cntlr_state_t
+0x2000d5b8,g_config,"persistent user config (turbo, sensitivities, remaps)",cntlr_config_t
+0x2000fffc,g_boot_mailbox,"u8[4] AA mode ~mode 55; survives warm reset"
+0x2000cdd6,g_ps5_fake_mac,"u8[6] MAC returned in DualSense feature report 0x09 (hardware-confirmed)",
+0x200006bc,g_usb_dev,"USB device handle passed to rom_usb_ep_enable",
+0x2000ce80,g_x360_dev_desc,"Xbox 360 mode device descriptor (045E:028E)",
+0x2000ce92,g_x360_cfg_desc,"Xbox 360 mode configuration descriptor (49 bytes, 1 interface)",
+0x1001c220,g_usb_cb_set_interface,"flash callback table entry -> usb_set_interface",
+0x1001c224,g_usb_cb_set_config,"flash callback table entry -> usb_set_config",
+0x1001c8dc,g_x360_str_desc0,"string descriptor 0 (language)",
+0x1001c8ee,g_x360_str_desc1,"string 1 'GuliKit'",
+0x1001c8fe,g_x360_str_desc2,"string 2 'GuliKit X'",
+0x1001c912,g_x360_str_desc3,"string 3 '000001'",
+0x1001c218,g_usb_cb_vendor,"flash callback table entry -> usb_req_vendor",
